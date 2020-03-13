@@ -1141,19 +1141,21 @@ case class TermsLookupQueryDefinition(field: String)
 
 case class TermQueryDefinition(field: String, value: Any) extends QueryDefinition {
 
-  val builder = value match {
+  val tqBuilder: TermQueryBuilder = value match {
     case str: String => QueryBuilders.termQuery(field, str)
     case iter: Iterable[Any] => QueryBuilders.termQuery(field, iter.toArray)
     case other => QueryBuilders.termQuery(field, other)
   }
 
+  val builder: QueryBuilder = tqBuilder
+
   def boost(boost: Double) = {
-    builder.boost(boost.toFloat)
+    tqBuilder.boost(boost.toFloat)
     this
   }
 
   def queryName(queryName: String): this.type = {
-    builder.queryName(queryName)
+    tqBuilder.queryName(queryName)
     this
   }
 }
